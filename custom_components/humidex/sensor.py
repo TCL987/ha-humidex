@@ -25,7 +25,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_TEMPERATURE): cv.entity_id,
     vol.Required(CONF_HUMIDITY): cv.entity_id ,
-    vol.Optional(ATTR_ICON, default='mdi:wifi-strength-outline'): cv.string
+    vol.Optional(ATTR_ICON, default='mdi:gauge-empty'): cv.string
 })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -69,10 +69,15 @@ class HumidexSensor(Entity):
         return self._icon
 
     @property
-    def device_state_attributes(self):
-        """Return the state attributes of the monitored installation."""
+    def extra_state_attributes(self):
+        """Return the extra state attributes of the monitored installation."""
         if self._attributes is not None:
             return self._attributes
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique, Home Assistant friendly identifier for this entity."""
+        return self._name.replace(" ", "_").lower()
 
     def update(self):
         """Fetch new state data for the sensor.
